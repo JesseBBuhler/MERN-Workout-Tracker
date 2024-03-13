@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useWorkoutsContext } from "../hooks/useWorkoutsContext";
-import useAuthContext from "../hooks/useAuthContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 //components
 import WorkoutDetails from "../components/WorkoutDetails";
@@ -10,28 +10,27 @@ const Home = () => {
   const { workouts, dispatch } = useWorkoutsContext();
   const { user } = useAuthContext();
   //[] tells it to only fire once when the component is rendered
-  useEffect(
-    () => {
-      //do not make the parameter function of useEffect async. make it the inner fucntion instead
-      const fetchWorkouts = async () => {
-        const response = await fetch("/api/workouts", {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        });
-        const json = await response.json();
-        if (response.ok) {
-          dispatch({ type: "SET_WORKOUTS", payload: json });
-        }
-      };
-
-      if (user) {
-        fetchWorkouts();
+  useEffect(() => {
+    //do not make the parameter function of useEffect async. make it the inner fucntion instead
+    const fetchWorkouts = async () => {
+      const response = await fetch("/api/workouts", {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
+      const json = await response.json();
+      if (response.ok) {
+        dispatch({ type: "SET_WORKOUTS", payload: json });
       }
-    },
-    [dispatch],
-    user
-  );
+    };
+
+    console.log("user:" + user);
+
+    if (user) {
+      console.log("user exists");
+      fetchWorkouts();
+    }
+  }, [dispatch, user]);
   return (
     <div className="home">
       <div className="workouts">
